@@ -1,12 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Portfolio</title>
-</head>
-<body>
-  <p>Hello, World!</p>
-</body>
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>홍길동 – 자기소개</title>
+    <style>
+      body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif; margin: 40px; line-height:1.6; }
+      .card { max-width: 780px; margin:auto; }
+      h1 { font-size: 2.2rem; margin-bottom: .2rem; }
+      .muted { color:#666; }
+      a { text-decoration:none; }
+      nav a { margin-right: 12px; }
+      img.avatar { width: 120px; height:120px; border-radius: 50%; object-fit:cover; }
+      section { margin-top: 28px; }
+      ul { padding-left: 18px; }
+      .badge { display:inline-block; padding:2px 8px; border:1px solid #ddd; border-radius:999px; margin-right:6px; font-size:.85rem;}
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <img class="avatar" src="https://avatars.githubusercontent.com/u/1?v=4" alt="프로필" />
+      <h1>홍길동</h1>
+      <div class="muted">Frontend Developer · Seoul</div>
+      <nav>
+        <a href="mailto:you@example.com">Email</a>
+        <a href="https://github.com/yourname">GitHub</a>
+        <a href="https://www.linkedin.com/in/yourname">LinkedIn</a>
+      </nav>
+
+      <section>
+        <h2>소개</h2>
+        <p>사용자 경험과 성능을 중시하는 프론트엔드 개발자입니다. React/TypeScript 기반으로 대규모 웹 앱을 만들고 있습니다.</p>
+      </section>
+
+      <section>
+        <h2>기술</h2>
+        <p>
+          <span class="badge">JavaScript</span>
+          <span class="badge">TypeScript</span>
+          <span class="badge">React</span>
+          <span class="badge">Node.js</span>
+        </p>
+      </section>
+
+      <section>
+        <h2>프로젝트</h2>
+        <ul>
+          <li><a href="#">포트폴리오 사이트</a> – 개인 포트폴리오와 블로그</li>
+          <li><a href="#">UI 컴포넌트 라이브러리</a> – 재사용 가능한 컴포넌트 모음</li>
+        </ul>
+      </section>
+    </div>
+  </body>
 </html>
