@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>World Models — Kang-il Lee</title>
+    <meta name="description" content="An introduction to world models — what they are, why they matter for embodied AI, and how recent video-based world models work." />
+
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false}
+        ]
+      })"></script>
+
+    <style>
+      /* ── Design tokens (matches main profile) ── */
+      :root {
+        --fg: #111;
+        --muted: #666;
+        --line: #ececec;
+        --bg: #fff;
+        --chip: #f6f6f6;
+        --accent: #0057b7;
+        --max: 720px;         /* reading column */
+        --wide: 960px;        /* figures can go wider */
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto,
+          "Noto Sans", "Noto Sans KR", sans-serif;
+        color: var(--fg);
+        background: var(--bg);
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.7;
+      }
+
+      /* ── Layout ── */
+      .site-header {
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--line);
+      }
+      .site-header a {
+        text-decoration: none;
+        color: var(--muted);
+        font-size: .9rem;
+      }
+      .site-header a:hover { color: var(--fg); }
+
+      article {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 48px 24px 80px;
+      }
+
+      /* ── Post header ── */
+      .post-header { margin-bottom: 40px; }
+      .post-header h1 {
+        font-size: 2rem;
+        line-height: 1.25;
+        margin: 0 0 12px;
+      }
+      .post-meta {
+        font-size: .875rem;
+        color: var(--muted);
+      }
+      .post-meta a { color: var(--muted); }
+
+      /* ── Abstract ── */
+      .abstract {
+        background: var(--chip);
+        border-left: 3px solid var(--line);
+        padding: 16px 20px;
+        margin: 32px 0;
+        font-size: .95rem;
+      }
+      .abstract strong { display: block; margin-bottom: 6px; }
+
+      /* ── Body text ── */
+      h2 {
+        font-size: 1.35rem;
+        margin: 48px 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--line);
+      }
+      h3 {
+        font-size: 1.1rem;
+        margin: 32px 0 8px;
+      }
+      p { margin: 0 0 16px; }
+      a { color: var(--accent); }
+
+      /* ── Video figure ── */
+      .fig {
+        margin: 32px -24px;       /* bleed past article padding */
+        max-width: var(--wide);
+        width: calc(100% + 48px);
+      }
+      @media (max-width: 760px) {
+        .fig { margin: 24px 0; width: 100%; }
+      }
+      .fig video {
+        width: 100%;
+        display: block;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #000;
+      }
+      .fig figcaption {
+        font-size: .85rem;
+        color: var(--muted);
+        margin-top: 8px;
+        padding: 0 4px;
+        line-height: 1.5;
+      }
+      .fig figcaption strong { color: var(--fg); }
+
+      /* ── Inline figure (half-width) ── */
+      .fig-inline {
+        margin: 24px 0;
+      }
+      .fig-inline video {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #000;
+      }
+      .fig-inline figcaption {
+        font-size: .85rem;
+        color: var(--muted);
+        margin-top: 6px;
+        line-height: 1.5;
+      }
+
+      /* ── Side-by-side videos ── */
+      .fig-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 28px 0;
+      }
+      @media (max-width: 600px) {
+        .fig-row { grid-template-columns: 1fr; }
+      }
+      .fig-row figure { margin: 0; }
+      .fig-row video {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #000;
+      }
+      .fig-row figcaption {
+        font-size: .82rem;
+        color: var(--muted);
+        margin-top: 6px;
+        line-height: 1.4;
+      }
+
+      /* ── Math display ── */
+      .math-block {
+        overflow-x: auto;
+        margin: 20px 0;
+        padding: 4px 0;
+      }
+
+      /* ── Inline code ── */
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: .88em;
+        background: var(--chip);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+
+      /* ── Footnote-style callout ── */
+      .note {
+        border-left: 3px solid #d0d0d0;
+        padding: 10px 16px;
+        margin: 20px 0;
+        font-size: .9rem;
+        color: var(--muted);
+      }
+
+      /* ── References ── */
+      .references {
+        border-top: 1px solid var(--line);
+        margin-top: 56px;
+        padding-top: 24px;
+        font-size: .875rem;
+        color: var(--muted);
+      }
+      .references h2 {
+        font-size: 1rem;
+        border: none;
+        margin: 0 0 12px;
+        padding: 0;
+        color: var(--fg);
+      }
+      .references ol { padding-left: 20px; margin: 0; }
+      .references li { margin-bottom: 8px; line-height: 1.5; }
+
+      /* ── Footer ── */
+      site-footer-bar {
+        display: block;
+        border-top: 1px solid var(--line);
+        padding: 20px 24px;
+        font-size: .875rem;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="site-header">
+      <a href="/blog/">&larr; Blog</a>
+    </div>
+
+    <article>
+
+      <!-- ── Post header ── -->
+      <header class="post-header">
+        <h1>Building World Model from Scratch</h1>
+        <div class="post-meta">
+          <a href="/">Kang-il Lee</a> &middot; March 2026
+        </div>
+      </header>
+
+      <!-- ── Abstract ── -->
+      <div class="abstract">
+        <strong>TL;DR</strong>
+        I trained a world model from scratch and it kinda works.
+      </div>
+      <!-- ══════════════════════════════════════════
+          INTRO
+      ══════════════════════════════════════════ -->
+      <h2>Intro</h2>
+
+      <p>
+        During my PhD, I was obsessed with a single question: <strong>how do we build machines that think like humans?</strong>
+        For several reasons, I believed <em>program synthesis</em> would be a core ingredient for that path. I spent a long time exploring
+        LLMs and program induction.
+      </p>
+
+      <p>
+        More recently, the idea of a <em>world model</em> grabbed my attention. Neuroscience has tons of evidence that
+        our brains make decisions by simulating the future. World models have started to crack problems in real-world robotics.
+        And Genie 3 looked like it might even make video game production obsolete.
+      </p>
+
+      <p>
+        At first, I started a project that modeled world dynamics using program synthesis, the tool I was most comfortable with.
+        But the further I went, I had to admit that this approach was unlikely to solve real-world robotics in any meaningful way.
+      </p>
+
+      <p>
+        I don’t mean it can’t solve <em>any</em> real-world problems. When a domain’s inputs and outputs already have strong structure,
+        program synthesis can excel. A large fraction of knowledge work that a person can do sitting at a computer will likely be solvable
+        via a combination of LLMs + program synthesis. But real-world robotics is simply too noisy to be handled by a system where
+        programs are first-class citizens.
+      </p>
+
+      <h2>From Symbolic to Neural</h2>
+
+      <p>
+        When I realized this, I turned my attention into neural world models and came across <em>Dreamer 4</em>. Dreamer 4 is a world model that can simulate
+        the Minecraft environment, and a policy trained inside that model’s “imagination.” It is the first model to successfully mine diamonds
+        in Minecraft while being trained purely from <strong>offline human gameplay logs</strong>.
+      </p>
+
+      <p>
+        What does that imply? A fundamental reason robot learning is hard is that you can’t really do trial-and-error learning in the real world.
+        Errors often mean the robot breaks something. If we can get meaningful performance from offline data alone, that suggests a similar path
+        for robotics: we might build robots that work reliably in the real world using only teleoperation data or
+        human egocentric data.
+      </p>
+
+      <p>
+        So I began implementing Dreamer 4’s world model (unfortunately, the paper’s code was not released), and if possible, trying to improve it.
+        This post is both a record of that journey and an educational resource for beginners getting into world models.
+      </p>
+
+      <p>
+        I started from the codebase at <code>github.com/p-doom/jasmine</code>, so I used <strong>JAX</strong> and <strong>flax.nnx</strong>.
+        I also referenced many parts of <code>github.com/edwhu/dreamer4-jax</code>.
+      </p>
+
+
+      <!-- ══════════════════════════════════════════
+          SECTION 1
+      ══════════════════════════════════════════ -->
+      <h2>What Is a World Model?</h2>
+
+      <p>
+        When you move a coffee cup on your table, you don’t need to physically test whether it will pass through the table.
+        Your brain runs a simulation that predicts what will happen next. That internal predictive simulator is
+        essentially a <em>world model</em>.
+      </p>
+
+      <p>
+        In AI, we train a neural network to do the same thing: given the current observation $o_t$ and an action
+        $a_t$, predict the next observation $o_{t+1}$. In practice (especially for high-dimensional inputs like video), we often predict
+        in a compact latent space and decode back to pixels.
+      </p>
+
+      <p>
+        Once you have such a model, an agent can <em>plan inside it</em> or <em>be trained inside it</em>, rolling out hypothetical action 
+        sequences and observations without interacting with the
+        real environment. This is especially valuable in robotics, where trial-and-error in the real world is prohibitively expensive.
+      </p>
+
+
+
+
+      <!-- ══════════════════════════════════════════
+          SECTION 3
+      ══════════════════════════════════════════ -->
+      <h2>Architecture</h2>
+
+      <p>
+        Dreamer 4 consists of two components: a <strong>video tokenizer</strong> and a <strong>dynamics model</strong>.
+      </p>
+
+      <p>
+        The video tokenizer maps high-dimensional video into low-dimensional latent tokens. The dynamics model predicts the future on this
+        latent space, substantially decreasing the compute per timestep. 
+      </p>
+
+      <p>
+        The video tokenizer is trained with a <em>masked autoencoding</em> objective. It is quite standard objective in tokenization. It randomly
+        masks certain proportion of the input tokens and reconstructs masekd part, based on adjacent tokens and past tokens.
+        One unusual aspect of the Dreamer 4 tokenizer is
+        how it extracts latents. Instead of directly mapping an image into tokens, it concatenates <em>special tokens</em> to the input,
+        feeds everything through the encoder, and then reads out the outputs corresponding to those special tokens as the latent representation.
+      </p>
+
+      <p>
+        The bottleneck compression ratio is determined by (1) how many special tokens you add, and (2) the output dimension of the final
+        projection layer. For example, if you use 32 special tokens, you get 32 latent tokens. If the final projection outputs dimension 64,
+        then a single frame is represented as a <strong>32×64</strong> matrix. If the video length is 64 frames, the full latent tensor becomes
+        <strong>64×32×64</strong>.
+      </p>
+
+      <p>
+        This design gives fine control over compute in the dynamics model. If you increase the number of latent tokens, the dynamics model must
+        process more tokens per time step. This is not merely tuning bottleneck size (you can also adjust latent dimension); the key benefit is
+        that you can tune <em>bottleneck capacity</em> and <em>dynamics compute intensity</em> almost independently.
+      </p>
+
+      <p>
+        The dynamics model is trained using a technique called <strong>shortcut forcing</strong>. Shortcut forcing roughly means training a
+        <em>shortcut model</em> in a <em>diffusion forcing</em> style.
+      </p>
+
+      <p>
+        A <strong>shortcut model</strong> is a kind of <em>flow-based model</em>, with the benefit of faster inference than conventional flow models.
+        At a high level, it learns a coarse step whose target is the composition of two fine steps.
+      </p>
+
+      <p>
+        <strong>Diffusion forcing</strong> trains the model to denoise after injecting random noise into each frame during training.
+        At inference time, you provide a clean context and add noise to the last frame; denoising then generates video autoregressively.
+      </p>
+
+      <p>
+        Many additional techniques are used for speed and performance: time-space axial transformers reduce attention cost, and LLM techniques like
+        RMSNorm and RoPE are heavily used. There is also <em>ramp loss</em>, which down-weights loss on samples with low signal level.
+        For full details, refer to the Dreamer 4 paper:
+        <a href="https://arxiv.org/abs/2509.24527" target="_blank" rel="noreferrer">arXiv:2509.24527</a>.
+      </p>
+
+
+      <!-- ══════════════════════════════════════════
+          SECTION 4
+      ══════════════════════════════════════════ -->
+      <h2>Training</h2>
+
+      <p>
+        I had access to <strong>4× A100</strong> GPUs, and even that was not always available due to queueing. I couldn’t
+        exhaustively experiment with every design choice; I needed to train as efficiently as possible from the start.
+      </p>
+
+      <p>
+        In my view, Dreamer 4’s biggest advantage was training with a <strong>long context length</strong>. Compared to MineWorld or Oasis—using
+        <strong>0.8s / 1.6s</strong> contexts (16 / 32 frames)—Dreamer 4’s <strong>9.6s</strong> context (192 frames) is enormous, and that helps
+        a lot for long-horizon simulation.
+      </p>
+
+      <p>
+        Dreamer 4 could do this with 1024 TPUs, but I had to compromise. In Minecraft, I set the maximum context length to
+        <strong>64 frames</strong>. I also mixed short batches (16 frames) with long batches during training, as Dreamer 4 does.
+      </p>
+
+      <p>
+        For CALVIN, since I used a smaller model, I used a maximum length of <strong>96 frames</strong>, and again mixed it with shorter
+        <strong>24-frame</strong> batches.
+      </p>
+
+      <figure class="fig-inline">
+        <img src="images/coinrun_log.png" alt="CoinRun training log" style="width:100%;border:1px solid var(--line);border-radius:4px;">
+        <figcaption>CoinRun training loss curves.</figcaption>
+      </figure>
+      <figure class="fig-inline">
+        <img src="images/calvin_log.png" alt="CALVIN training log" style="width:100%;border:1px solid var(--line);border-radius:4px;">
+        <figcaption>CALVIN training loss curves.</figcaption>
+      </figure>
+
+
+      <!-- ══════════════════════════════════════════
+          SECTION 5
+      ══════════════════════════════════════════ -->
+      <h2>Inference</h2>
+
+      <p>
+        After training the model and entering the first validation loop, I found validation was taking an abnormally long time. Autoregressive
+        generation across multiple frames is naturally slow, but validation was taking <strong>one-third</strong> of total training time.
+        The issue turned out to be complicated.
+      </p>
+
+      <p>
+        First, I started without a KV cache implementation, so the clean context had to be recomputed from scratch on every forward pass.
+        I initially thought this was the sole cause.
+      </p>
+
+      <p>
+        After implementing KV cache as an internal model state and passing sanity checks, I ran validation again—and was shocked to see validation
+        time did <em>not</em> decrease at all. After spending hours looking for a non-existent bug, I realized the issue wasn’t a bug; it was
+        how <strong>JAX</strong> works.
+      </p>
+
+      <p>
+        Because JAX compiles computation graphs, changing input tensor shapes triggers recompilation, which is very slow. As KV cache accumulated,
+        the sequence length increased step by step, and recompilation was happening every time the length grew by one.
+      </p>
+
+      <p>
+        Looking into how this is typically handled in JAX/Flax, I found that Flax initializes the cache at a fixed size and updates elements
+        in place.
+      </p>
+
+      <p>
+        But the <code>MultiHeadAttention</code> class that included this feature wrapped <em>scaled dot product attention (SDPA)</em>, which made
+        it incompatible with <em>RoPE</em>, where you need to directly modify queries and keys. In the end, I implemented a new attention class
+        that supports both RoPE and KV cache.
+      </p>
+
+      <p>
+        This new class also changed cache-index handling to better match diffusion/flow inference: instead of automatically advancing the cache
+        index on every forward pass, it advances only when denoising finishes (manually controlled).
+      </p>
+
+      <p>
+        With this new class, inference became dramatically faster, and validation became negligible in total training time. Still, a single
+        training run takes 3–5 days in Minecraft. <em>The waiting is the hardest part.</em>
+      </p>
+
+
+      <!-- ══════════════════════════════════════════
+          SECTION 2
+      ══════════════════════════════════════════ -->
+      <h2>Dataset</h2>
+
+      <p>
+        Because <code>jasmine</code> supports fast prototyping on Procgen’s <em>coinrun</em>, it was the first dataset I tried.
+        The tokenizer and dynamics model were learning reasonably well.
+      </p>
+
+
+      <!-- ── Wide video figure ── -->
+      <figure class="fig">
+        <video autoplay controls muted loop playsinline
+              src="videos/coinrun.mp4"
+              poster="thumbs/world-model-overview.jpg">
+          Your browser does not support the video tag.
+        </video>
+        <video autoplay controls muted loop playsinline
+              src="videos/coinrun2.mp4"
+              poster="thumbs/world-model-overview.jpg">
+          Your browser does not support the video tag.
+        </video>
+        <figcaption>
+          A world model trained on randomly generated coinrun trajectories. Left: real environment frames. Right: imagination
+          by the model given only the first 8 frames (0.8s).
+        </figcaption>
+      </figure>
+
+      <p>
+        So I moved to <strong>Minecraft</strong>. For training data, I used the OpenAI VPT contractor demonstrations, which was the largest dataset I had ever worked with.
+        The video and action files were about 7TB, too large to fit on my server, so I had to resize the original
+        360p videos down to 224p.
+      </p>
+
+      <p>
+        After starting tokenizer training, I noticed GPU utilization was abnormally low. After investigating, I found the issue:
+        when sampling a batch, I was reading entire ~5-minute videos each time.
+      </p>
+
+      <p>
+        For example, if the batch size is 32 and <code>seq_len</code> is 64, and videos are stored in 5-minute chunks, preparing a single batch
+        requires reading <strong>32 × 5 minutes = 160 minutes</strong> of video. At that point, hard disk I/O becomes slower than the GPU step time.
+        So the dataset needed to be preprocessed into 3.2-second chunks (64 frames).
+        In the end, I prepared <strong>3 million</strong> 3.2-second video clips for training.
+      </p>
+
+      <p>
+        This video chunking process itself took so long, let alone the training the tokenizer and dynamics model.
+        So I ran experiments on the <strong>CALVIN</strong> first, which involves controlling a robot arm. CALVIN uses
+        200×200 images as observations and has a 7D continuous action space.
+      </p>
+
+
+
+      <!-- ══════════════════════════════════════════
+          SECTION 6
+      ══════════════════════════════════════════ -->
+      <h2>Results</h2>
+
+      <p>
+        On CALVIN, you can see that inside the world model’s imagination, the robot arm behaves quite similarly to the ground truth (GT). Also, the causal mechanisms
+        of the desk (turning light on with slider) is well modeled.
+      </p>
+
+      <!-- ── Wide video figure ── -->
+      <figure class="fig">
+        <video autoplay controls muted loop playsinline
+              src="videos/calvin.mp4"
+              poster="thumbs/world-model-overview.jpg">
+          Your browser does not support the video tag.
+        </video>
+        <video autoplay controls muted loop playsinline
+              src="videos/calvin2.mp4"
+              poster="thumbs/world-model-overview.jpg">
+          Your browser does not support the video tag.
+        </video>
+        <video autoplay controls muted loop playsinline
+              src="videos/calvin3.mp4"
+              poster="thumbs/world-model-overview.jpg">
+          Your browser does not support the video tag.
+        </video>
+        <figcaption>
+          A world model trained on human demonstrations. Left: real environment frames. Right: imagination
+          by the model given only the initial frame.
+        </figcaption>
+      </figure>
+
+      <p>
+        However, object consistency is not well maintained (see the purple block in the second video changing its size). My guess is that the latent compression ratio is too aggressive, making it difficult
+        for the flow model to generate dynamics precisely. Even if tokenizer reconstruction is perfect, whether the latent space is
+        easy to learn is a different story.
+      </p>
+
+      <p>
+        With the current compression ratio, even a small movement in latent space can map to a different representation, so small accumulated
+        generation errors can turn into large shifts over time.
+      </p>
+
+      <p>
+        And finally, the Minecraft dynamics model is learning something! Although it has few days of training left to fully converge, results show that it
+        has some understanding of minecraft environment (crafting table interface, putting blocks, etc.).
+      </p>
+
+
+      <!-- ── Wide video figure ── -->
+      <figure class="fig">
+        <video autoplay controls muted loop playsinline
+              src="videos/minecraft2.mp4"
+              poster="thumbs/world-model-overview.jpg">
+          Your browser does not support the video tag.
+        </video>
+        <video autoplay controls muted loop playsinline
+              src="videos/minecraft3.mp4"
+              poster="thumbs/world-model-overview.jpg">
+          Your browser does not support the video tag.
+        </video>
+        <video autoplay controls muted loop playsinline
+              src="videos/minecraft.mp4"
+              poster="thumbs/world-model-overview.jpg">
+          Your browser does not support the video tag.
+        </video>
+        <figcaption>
+          A world model trained on Minecraft. Left: real environment frames. Right: imagination
+          by the model given only the first 8 frames (0.4s). After few steps, the frames become very blurry.
+        </figcaption>
+      </figure>
+
+
+      <!-- ══════════════════════════════════════════
+          SECTION 7
+      ══════════════════════════════════════════ -->
+      <h2>Next Steps</h2>
+
+      <p>
+        First, to address object persistency, I plan to retrain with a <strong>larger tokenizer bottleneck</strong>, especially by increasing
+        the number of latent tokens. Of course, that means even longer training time.
+      </p>
+
+      <p>
+        According to the <em>MeanFlow</em> paper, it achieves better performance with far less training compute than shortcut models.
+        I’m considering switching the flow model loss to a mean-flow objective to reduce the painfully long training time. Some people in the
+        community say MeanFlow can be unstable in practice and may not perform well in difficult domains. But it’s worth trying.
+      </p>
+
+      <p>
+        Another promising direction is improving <strong>long-term memory</strong>. But rather than improving the world model’s long-term
+        consistency alone, the more important question is: when paired with a policy, how can memory be used effectively to solve tasks?
+      </p>
+
+      <!-- ── References ── -->
+      <div class="references">
+        <h2>References</h2>
+        <ol>
+          <li id="ref-dreamer4">Hafner, D., Yan, W., &amp; Lillicrap, T. (2025). <em>Training Agents Inside of Scalable World Models.</em> <a href="https://arxiv.org/abs/2509.24527" target="_blank" rel="noreferrer">arXiv:2509.24527</a>.</li>
+          <li id="ref-genie3">Google DeepMind. (2025). <em>Genie 3.</em> <a href="https://deepmind.google/models/genie/" target="_blank" rel="noreferrer">Website</a>.</li>
+          <li id="ref-mineworld">Guo, J. et al. (2025). <em>MineWorld: a Real-Time and Open-Source Interactive World Model on Minecraft.</em> <a href="https://arxiv.org/abs/2504.08388" target="_blank" rel="noreferrer">arXiv:2504.08388</a>.</li>
+          <li id="ref-oasis">Decart &amp; Etched. (2024). <em>Oasis: A Universe in a Transformer.</em> <a href="https://oasis-model.github.io/" target="_blank" rel="noreferrer">oasis-model.github.io</a>.</li>
+          <li id="ref-shortcut">Frans, K., Hafner, D., Levine, S., &amp; Abbeel, P. (2025). <em>One Step Diffusion via Shortcut Models.</em> ICLR 2025. <a href="https://arxiv.org/abs/2410.12557" target="_blank" rel="noreferrer">arXiv:2410.12557</a>.</li>
+          <li id="ref-diffusion-forcing">Chen, B. et al. (2024). <em>Diffusion Forcing: Next-Token Prediction Meets Full-Sequence Diffusion.</em> NeurIPS 2024. <a href="https://arxiv.org/abs/2407.01392" target="_blank" rel="noreferrer">arXiv:2407.01392</a>.</li>
+          <li id="ref-meanflow">Geng, Z. et al. (2025). <em>Mean Flows for One-step Generative Modeling.</em> NeurIPS 2025. <a href="https://arxiv.org/abs/2505.13447" target="_blank" rel="noreferrer">arXiv:2505.13447</a>.</li>
+          <li id="ref-vpt">Baker, B. et al. (2022). <em>Video PreTraining (VPT): Learning to Act by Watching Unlabeled Online Videos.</em> <a href="https://arxiv.org/abs/2206.11795" target="_blank" rel="noreferrer">arXiv:2206.11795</a>.</li>
+          <li id="ref-calvin">Mees, O., Hermann, L., Rosete-Beas, E., &amp; Burgard, W. (2022). <em>CALVIN: A Benchmark for Language-Conditioned Policy Learning for Long-Horizon Robot Manipulation Tasks.</em> IEEE RA-L. <a href="https://arxiv.org/abs/2112.03227" target="_blank" rel="noreferrer">arXiv:2112.03227</a>.</li>
+        </ol>
+      </div>
+
+    </article>
+
+    <site-footer-bar>
+      <div style="max-width:var(--max);margin:0 auto">
+        <p style="margin:0">&copy; <span id="y"></span> Kang-il Lee &mdash; <a href="/blog/" style="color:inherit">Blog</a> &middot; <a href="/" style="color:inherit">Home</a></p>
+      </div>
+    </site-footer-bar>
+
+    <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
+  </body>
+</html>

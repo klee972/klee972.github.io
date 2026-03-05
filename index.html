@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kang-il Lee</title>
+    <meta name="description" content="Academic profile and publications of Kang-il Lee." />
+    <style>
+      :root{
+        --fg:#111; --muted:#666; --line:#ececec; --bg:#fff; --chip:#f6f6f6;
+        --max: 900px;
+      }
+      *{box-sizing:border-box}
+      body{font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans", "Noto Sans KR",sans-serif; color:var(--fg); background:var(--bg); margin:0}
+      header, main, footer{padding:24px}
+      .wrap{max-width:var(--max); margin:0 auto}
+      .hero{display:grid; grid-template-columns:112px 1fr; gap:18px; align-items:center}
+      .avatar{width:112px;height:112px;border-radius:50%;object-fit:cover;border:1px solid var(--line);background:#fafafa}
+      h1{font-size:2rem;margin:.2rem 0}
+      h2{font-size:1.25rem;margin:24px 0 8px}
+      p, li{line-height:1.6}
+      .muted{color:var(--muted)}
+      nav a{margin-right:14px;text-decoration:none}
+      section{padding:20px 0;border-top:1px solid var(--line)}
+      ul{margin:8px 0 0 0;padding-left:20px}
+      .chips{display:flex;flex-wrap:wrap;gap:8px}
+      .chip{padding:4px 10px; background:var(--chip); border:1px solid var(--line); border-radius:999px; font-size:.9rem}
+      .grid-2{display:grid;grid-template-columns:1fr;gap:18px}
+      @media(min-width:860px){ .grid-2{grid-template-columns:1fr 1fr} }
+      .pubs li{margin-bottom:8px}
+      .small{font-size:.95rem}
+      .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+      footer{border-top:1px solid var(--line)}
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <div class="hero">
+          <!-- Replace src with your photo path (see instructions below) -->
+          <img class="avatar" src="profile.jpg" alt="Portrait of Kang-il Lee" />
+          <div>
+            <h1>Kang-il Lee</h1>
+            <div class="muted small">Ph.D. Candidate, Electrical &amp; Computer Engineering, Seoul National University</div>
+            <nav class="small">
+              <a href="mailto:4bkang@snu.ac.kr">Email</a>
+              <a href="https://github.com/klee972" target="_blank" rel="noopener">GitHub</a>
+              <a href="https://www.linkedin.com/in/kang-il-lee-281a29183/" target="_blank" rel="noopener">LinkedIn</a>
+              <a href="/blog/">Blog</a>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <section>
+          <h2>About</h2>
+          <p class="small">
+            I am a researcher focusing on world models and vision–language models. Until recently, my research focused on program synthesis with LLMs. My work explores robust program synthesis and semantic parsing, diagnostic benchmarks and decoding strategies for multimodal models, and methods to increase diversity in large language models.
+          </p>
+          <div class="chips">
+            <span class="chip">World Models</span>
+            <span class="chip">Vision–Language Models</span>
+            <span class="chip">Program Synthesis</span>
+            <span class="chip">Code Generation</span>
+          </div>
+        </section>
+
+        <section class="grid-2">
+          <div>
+            <h2>Education</h2>
+            <ul class="small">
+              <li><strong>Seoul National University</strong> — Ph.D. in Electrical &amp; Computer Engineering (Mar 2022 – Present)</li>
+              <li><strong>KAIST</strong> — M.S. in Mechanical Engineering (Mar 2020 – Feb 2022)<br/>
+                  Thesis: <em>Visual Reasoning with Neural Program Induction</em></li>
+              <li><strong>Seoul National University</strong> — B.S. in Mechanical &amp; Aerospace Engineering, <em>Cum Laude</em> (Mar 2016 – Feb 2020)</li>
+            </ul>
+          </div>
+          <div>
+            <h2>Honors &amp; Awards</h2>
+            <ul class="small">
+              <li>Best Paper Award, The Eleventh Dialog System Technology Challenge (DSTC 11) — Track 5 (Task-oriented Conversational Modeling with Subjective Knowledge)</li>
+            </ul>
+          </div>
+        </section>
+
+        <section>
+          <h2>Selected Research &amp; Projects</h2>
+          <ul class="small">
+            <li><strong>Transductive Program Synthesis</strong> — a test-time method leveraging test inputs for more robust synthesis; validated via programmatic world modeling experiments (NeurIPS 2025).
+            <a href="https://arxiv.org/abs/2509.17393" target="_blank" rel="noopener">[paper]</a></li>
+            <li><strong>Measuring Language Priors in VLMs</strong> — method &amp; benchmark isolating language priors from confounds (NAACL 2025 Findings).
+            <a href="https://arxiv.org/abs/2406.08702" target="_blank" rel="noopener">[paper]</a></li>
+            <li><strong>Summary-Guided Decoding for VLMs</strong> — reduces hallucination by shortening input context during decoding (NAACL 2025 Findings).
+            <a href="https://arxiv.org/abs/2410.13321" target="_blank" rel="noopener">[paper]</a></li>
+            <li><strong>Diverse Hypotheses for Inductive Reasoning</strong> — increases hypothesis &amp; program diversity beyond IID sampling (NAACL 2025 Oral).
+            <a href="https://aclanthology.org/2025.naacl-long.429/" target="_blank" rel="noopener">[paper]</a></li>
+            <li><strong>Spurious Program Mitigation</strong> — algorithm to filter spurious programs when training a program synthesizer without GT programs (EMNLP 2023).
+            <a href="https://arxiv.org/abs/2311.01161" target="_blank" rel="noopener">[paper]</a></li>
+            <li><strong>World Models</strong> — improving world models for long horizon tasks/language understanding/etc (work in progress).</li>
+          </ul>
+        </section>
+
+<section>
+  <h2>Publications</h2>
+  <ul class="small pubs">
+    <li><strong>Kang-il Lee</strong>, Jahyun Koo, Seunghyun Yoon, Minbeom Kim, Hyukhun Koh, Dongryeol Lee, Kyomin Jung,
+      <em>Program Synthesis via Test-Time Transduction</em>, <strong>NeurIPS 2025</strong>.
+      <a href="https://arxiv.org/abs/2509.17393" target="_blank" rel="noopener">[paper]</a>
+    </li>
+
+    <li>Minbeom Kim, <strong>Kang-il Lee</strong>, Seongho Joo, Hwaran Lee, Thibaut Thonet, Kyomin Jung,
+      <em>Drift: Decoding-time Personalized Alignments with Implicit User Preferences</em>, <strong>EMNLP Findings 2025</strong>.
+      <a href="https://arxiv.org/abs/2502.14289" target="_blank" rel="noopener">[paper]</a>
+    </li>
+
+    <li><strong>Kang-il Lee</strong>, Hyukhun Koh, Dongryeol Lee, Seunghyun Yoon, Minsung Kim, Kyomin Jung,
+      <em>Generating Diverse Hypotheses for Inductive Reasoning</em>, <strong>NAACL 2025</strong>.
+      <a href="https://aclanthology.org/2025.naacl-long.429/" target="_blank" rel="noopener">[paper]</a>
+    </li>
+
+    <li><strong>Kang-il Lee</strong>, Minbeom Kim, Seunghyun Yoon, Minsung Kim, Dongryeol Lee, Hyukhun Koh, Kyomin Jung,
+      <em>VLind-Bench: Measuring Language Priors in Large Vision-Language Models</em>, <strong>NAACL Findings 2025</strong>.
+      <a href="https://arxiv.org/abs/2406.08702" target="_blank" rel="noopener">[paper]</a>
+    </li>
+
+    <li>Kyungmin Min, Minbeom Kim, <strong>Kang-il Lee</strong>, Dongryeol Lee, Kyomin Jung,
+      <em>Mitigating Hallucinations in Large Vision-Language Models via Summary-Guided Decoding</em>, <strong>NAACL Findings 2025</strong>.
+      <a href="https://arxiv.org/abs/2410.13321" target="_blank" rel="noopener">[paper]</a>
+    </li>
+
+    <li>Yunah Jang, <strong>Kang-il Lee</strong>, Hyunkyung Bae, Hwanhee Lee, Kyomin Jung,
+      <em>IterCQR: Iterative Conversational Query Reformulation with Retrieval Guidance</em>, <strong>NAACL 2024</strong>.
+      <a href="https://aclanthology.org/2024.naacl-long.449/" target="_blank" rel="noopener">[paper]</a>
+    </li>
+
+    <li><strong>Kang-il Lee</strong>, Segwang Kim, Kyomin Jung,
+      <em>Weakly Supervised Semantic Parsing with Execution-based Spurious Program Filtering</em>, <strong>EMNLP 2023</strong>.
+      <a href="https://arxiv.org/abs/2311.01161" target="_blank" rel="noopener">[paper]</a>
+    </li>
+
+    <li>Minwoo Lee, Hyukhun Koh, <strong>Kang-il Lee</strong>, Dongdong Zhang, Minsung Kim, Kyomin Jung,
+      <em>Target-Agnostic Gender-Aware Contrastive Learning for Mitigating Bias in Multilingual Machine Translation</em>, <strong>EMNLP 2023</strong>.
+      <a href="https://arxiv.org/abs/2305.14016" target="_blank" rel="noopener">[paper]</a>
+    </li>
+
+    <li>Seongho Joo*, <strong>Kang-il Lee*</strong>, Kyungmin Min*, Joongbo Shin, Janghoon Han, Seungpil Won, Kyomin Jung,
+      <em>Leveraging Ensemble Techniques and Metadata for Subjective Knowledge-grounded Conversational Systems</em>, SIGDial Workshop (<strong>DSTC11</strong>), 2023.
+      <a href="https://aclanthology.org/2023.dstc-1.23/" target="_blank" rel="noopener">[paper]</a>
+    </li>
+
+    <li>Kwonyoung Ryu, <strong>Kang-il Lee</strong>, Jegyeong Cho, Kuk-Jin Yoon,
+      <em>Scanline Resolution-Invariant Depth Completion Using a Single Image and Sparse LiDAR Point Cloud</em>, <strong>IEEE RA-L</strong>, 2021.
+      <a href="https://doi.org/10.1109/LRA.2021.3096499" target="_blank" rel="noopener">[paper]</a>
+    </li>
+  </ul>
+</section>
+
+
+        <section class="grid-2">
+          <div>
+            <h2>Academic Service</h2>
+            <ul class="small">
+              <li>Reviewer, NeurIPS 2025</li>
+              <li>Reviewer, ACL Rolling Review (Jun, Aug, Oct, Dec 2024; May, Oct 2025; Jan 2026)</li>
+            </ul>
+          </div>
+          <div>
+            <h2>Contact</h2>
+            <p class="small">
+              Bldg. 303, Rm. 561-2, 1, Gwanak-ro, Gwanak-gu, Seoul, Republic of Korea<br/>
+              <a href="mailto:4bkang@snu.ac.kr">4bkang@snu.ac.kr</a>
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <div class="wrap small muted">
+        © <span id="y"></span>. Kang-il Lee All rights reserved.
+      </div>
+      <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
+    </footer>
+  </body>
+</html>
