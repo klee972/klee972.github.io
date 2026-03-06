@@ -46,6 +46,9 @@
       .site-header {
         padding: 18px 24px;
         border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
       .site-header a {
         text-decoration: none;
@@ -220,6 +223,7 @@
 
     <div class="site-header">
       <a href="/blog/">&larr; Blog</a>
+      <a href="/blog/posts/world-model-intro/ko/">한국어</a>
     </div>
 
     <article>
@@ -269,8 +273,8 @@
       <h2>From Symbolic to Neural</h2>
 
       <p>
-        When I realized this, I turned my attention into neural world models and came across <em>Dreamer 4</em>. Dreamer 4 is a world model that can simulate
-        the Minecraft environment, and a policy trained inside that model’s “imagination.” It is the first model to successfully mine diamonds
+        When I realized this, I turned my attention to neural world models and came across <em>Dreamer 4</em>. Dreamer 4 is a world model that simulates
+        the Minecraft environment and trains a policy inside its “imagination.” It’s the first model to successfully mine diamonds
         in Minecraft while being trained purely from <strong>offline human gameplay logs</strong>.
       </p>
 
@@ -328,13 +332,13 @@
       </p>
 
       <p>
-        The video tokenizer maps high-dimensional video into low-dimensional latent tokens. The dynamics model predicts the future on this
-        latent space, substantially decreasing the compute per timestep. 
+        The video tokenizer maps high-dimensional video into low-dimensional latent tokens. The dynamics model predicts the future in this
+        latent space, substantially cutting down compute per timestep.
       </p>
 
       <p>
-        The video tokenizer is trained with a <em>masked autoencoding</em> objective. It is quite standard objective in tokenization. It randomly
-        masks certain proportion of the input tokens and reconstructs masekd part, based on adjacent tokens and past tokens.
+        The video tokenizer is trained with a <em>masked autoencoding</em> objective. It's a pretty standard objective in tokenization — it randomly
+        masks a certain portion of the input tokens and reconstructs the masked parts, based on neighboring and past tokens.
         One unusual aspect of the Dreamer 4 tokenizer is
         how it extracts latents. Instead of directly mapping an image into tokens, it concatenates <em>special tokens</em> to the input,
         feeds everything through the encoder, and then reads out the outputs corresponding to those special tokens as the latent representation.
@@ -446,7 +450,7 @@
 
       <p>
         But the <code>MultiHeadAttention</code> class that included this feature wrapped <em>scaled dot product attention (SDPA)</em>, which made
-        it incompatible with <em>RoPE</em>, where you need to directly modify queries and keys. In the end, I implemented a new attention class
+        it incompatible with RoPE, where you need to directly modify queries and keys. In the end, I implemented a new attention class
         that supports both RoPE and KV cache.
       </p>
 
@@ -509,7 +513,7 @@
       </p>
 
       <p>
-        This video chunking process itself took so long, let alone the training the tokenizer and dynamics model.
+        This video chunking process alone took forever, let alone training the tokenizer and dynamics model.
         So I ran experiments on the <strong>CALVIN</strong> first, which involves controlling a robot arm. CALVIN uses
         200×200 images as observations and has a 7D continuous action space.
       </p>
@@ -522,8 +526,8 @@
       <h2>Results</h2>
 
       <p>
-        On CALVIN, you can see that inside the world model’s imagination, the robot arm behaves quite similarly to the ground truth (GT). Also, the causal mechanisms
-        of the desk (turning light on with slider) is well modeled.
+        On CALVIN, you can see that inside the world model’s imagination, the robot arm behaves quite similarly to the ground truth (GT). The causal mechanisms
+        of the desk (turning the light on with the slider) are pretty well modeled too.
       </p>
 
       <!-- ── Wide video figure ── -->
@@ -561,8 +565,8 @@
       </p>
 
       <p>
-        And finally, the Minecraft dynamics model is learning something! Although it has few days of training left to fully converge, results show that it
-        has some understanding of minecraft environment (crafting table interface, putting blocks, etc.).
+        And finally, the Minecraft dynamics model is learning something! It still has a few days of training left to fully converge, but you can already see
+        it has some grasp of the Minecraft environment (the crafting table interface, placing blocks, etc.).
       </p>
 
 
