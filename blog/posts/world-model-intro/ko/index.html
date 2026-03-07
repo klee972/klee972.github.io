@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>월드 모델 만들기 — Kang-il Lee</title>
+    <title>월드 모델 — Kang-il Lee</title>
     <meta name="description" content="Dreamer 4를 구현하면서 겪은 시행착오들." />
 
     <!-- KaTeX for math rendering -->
@@ -239,7 +239,7 @@
       <!-- ── Abstract ── -->
       <div class="abstract">
         <strong>한 줄 요약</strong>
-        Dreamer 4 어찌저찌 구현해보았고, 그럭저럭 돌아갑니다.
+        월드 모델을 구현해보면서 겪은 시행착오와 배운 것들. <a href="https://github.com/klee972/worldmodel" target="_blank" rel="noreferrer">github repo</a>
       </div>
 
       <!-- ══════════════════════════════════════════
@@ -249,7 +249,7 @@
 
       <p>
         박사 과정 내내 나를 사로잡았던 질문은 <strong>어떻게 하면 인간처럼 생각하는 기계를 만들 수 있을까?</strong> 였습니다.
-        여러 이유로 나는 <em>프로그램 합성(program synthesis)</em>이 그 열쇠가 될 거라고 믿었고,
+        여러 이유로 나는 <em>프로그램 합성(program synthesis)</em> 이 그 열쇠가 될 거라고 믿었고,
         LLM과 program induction 연구에 오랜 시간을 쏟았습니다.
       </p>
 
@@ -264,12 +264,12 @@
       </p>
 
       <p>
-        이게 그 어떤 실제 문제도 못 푼다는 게 아닙니다. 입출력이 이미 강하게 구조화 되어있는 있는 도메인에서는 프로그램 합성이 강력할 수 있습니다.
+        프로그램 합성이 그 어떤 real world 문제도 못 푼다는 게 아닙니다. 입출력이 이미 강하게 구조화 되어있는 있는 도메인에서는 프로그램 합성이 강력할 수 있습니다.
         즉, 컴퓨터 앞에 앉아서 하는 지식 노동의 상당 부분은 LLM + 프로그램 합성 조합으로 풀릴 가능성이 높습니다.
         하지만 실제 로보틱스는 너무 노이즈가 많아, 프로그램이 주가 되는 시스템으로는 감당하기 어렵습니다.
       </p>
 
-      <h2>상징에서 신경망으로</h2>
+      <h2>프로그램에서 신경망으로</h2>
 
       <p>
         이 사실을 깨달은 뒤 신경망 기반 월드 모델로 눈을 돌렸고, <em>Dreamer 4</em>를 발견했습니다.
@@ -325,7 +325,7 @@
       <h2>아키텍처</h2>
 
       <p>
-        Dreamer 4는 두 가지 구성 요소로 이루어집니다: <strong>비디오 토크나이저</strong>와 <strong>다이나믹스 모델</strong>.
+        Dreamer 4는 두 가지 구성 요소로 이루어집니다: <strong>비디오 토크나이저</strong>와 <strong>다이나믹스 모델</strong> 입니다.
       </p>
 
       <p>
